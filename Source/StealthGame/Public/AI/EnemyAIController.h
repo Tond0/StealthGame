@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "EnemyAIController.generated.h"
 
+class UAIPerceptionComponent;
+
 /**
  * 
  */
@@ -14,9 +16,19 @@ class STEALTHGAME_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+	AEnemyAIController();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BlueprintProtected))
 	UBehaviorTree* BTEnemy;
+
+//AI Perception
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BlueprintProtected))
+	UAIPerceptionComponent* AIPerceptionComponent;;
+	
+	UFUNCTION()
+	void Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStimulus Stimulus);
 
 protected:
 	UFUNCTION()
