@@ -25,6 +25,7 @@ void AEnemyAIController::BeginPlay()
 
 	//Bind Events
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPerceptionUpdated);
+	//AIPerceptionComponent->OnTargetPerception
 
 	//Run the base behaviour tree.
 	RunBehaviorTree(BTEnemy);
@@ -44,6 +45,7 @@ void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStim
 		//GetBlackBoard Component and Key
 		UBlackboardComponent* BlackBoard = GetBlackboardComponent();
 		FName BlackBoardPlayerKey = "Player";
+		FName BlackBoardStimulusLocationKey = "StimulusLocation";
 
 		if (Stimulus.WasSuccessfullySensed())
 		{
@@ -54,6 +56,9 @@ void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStim
 		{
 			//If we did NOT see the player we return nullptr.
 			Blackboard->SetValueAsObject(BlackBoardPlayerKey, nullptr);
+			
+			if (!Stimulus.IsExpired())
+				Blackboard->SetValueAsVector(BlackBoardStimulusLocationKey, Stimulus.StimulusLocation);
 		}
 	}
 }

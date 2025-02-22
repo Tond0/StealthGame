@@ -67,6 +67,7 @@ void AStealthGameCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	
 }
 
 void AStealthGameCharacter::Tick(float DeltaSeconds)
