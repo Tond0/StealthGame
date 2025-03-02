@@ -3,6 +3,9 @@
 
 #include "AI/EnemyCharacter.h"
 #include "AI/AIBehaviourComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -17,7 +20,7 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	BlackBoardComponent = UAIBlueprintHelperLibrary::GetBlackboard(this);
 }
 
 // Called every frame
@@ -32,5 +35,29 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemyCharacter::ReceiveAttack()
+{
+	//Update Bool Blackboard.
+	BlackBoardComponent->SetValueAsBool("IsBeingAttacked", true);
+	//Disable Collision.
+	SetActorEnableCollision(false);
+}
+
+bool AEnemyCharacter::CanBeAttacked()
+{
+	FName PlayerBlackboardKey = "Player";
+	FName StimulusLocationBlackboardKey = "StimulusLocation";
+
+	//If the enemy doesnt even suspect that the player is around, we can kill him 100%
+	UObject* Player = BlackBoardComponent->GetValueAsObject(PlayerBlackboardKey);
+	if (!IsValid(Player)) return true;
+
+	//If the enemy knows the player is around we check if its investigating or its a direct contact.
+	bool IsInvestigating = BlackBoardComponent->IsVectorValueSet(StimulusLocationBlackboardKey);
+	if (IsInvestigating) return true;
+
+	return false;
 }
 

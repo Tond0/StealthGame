@@ -31,12 +31,11 @@ EBTNodeResult::Type UBTTask_FindNextPatrolPoint::ExecuteTask(UBehaviorTreeCompon
 
 	const UAIBehaviourComponent* AIBehaviourComponent = AICharacter->GetAIBehaviourComponent();
 
-	APatrolPoint* PatrolPoint = Cast<APatrolPoint>(BlackBoardComponent->GetValueAsObject(BlackboardKeyPatrolPoint.SelectedKeyName));
+	APatrolPoint* PatrolPoint = Cast<APatrolPoint>(BlackBoardComponent->GetValueAsObject(GetSelectedBlackboardKey()));
 	AIBehaviourComponent->UpdateToNextPatrolPoint(PatrolPoint);
 	FVector NextLocation = PatrolPoint->GetActorLocation();
 
-	BlackBoardComponent->SetValueAsObject(BlackboardKeyPatrolPoint.SelectedKeyName, PatrolPoint);
-	BlackBoardComponent->SetValueAsVector(GetSelectedBlackboardKey(), NextLocation);
+	BlackBoardComponent->SetValueAsObject(GetSelectedBlackboardKey(), PatrolPoint);
 
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

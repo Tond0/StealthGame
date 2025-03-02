@@ -26,6 +26,9 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BlueprintProtected))
 	UAIPerceptionComponent* AIPerceptionComponent;;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BlueprintProtected))
+	bool IsBeingSpotted;
 	
 	UFUNCTION()
 	void Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStimulus Stimulus);

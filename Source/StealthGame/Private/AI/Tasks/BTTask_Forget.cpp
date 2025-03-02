@@ -15,7 +15,9 @@ UBTTask_Forget::UBTTask_Forget(FObjectInitializer const& ObjectInitializer)
 EBTNodeResult::Type UBTTask_Forget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackBoardComponent = OwnerComp.GetBlackboardComponent();
-	BlackBoardComponent->SetValueAsObject(GetSelectedBlackboardKey(), nullptr);
+
+	BlackBoardComponent->ClearValue(GetSelectedBlackboardKey());
+	BlackBoardComponent->ClearValue(BlackboardKey2.SelectedKeyName);
 
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

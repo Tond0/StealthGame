@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
+
 AEnemyAIController::AEnemyAIController()
 {
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("AIPerception");
@@ -26,7 +27,6 @@ void AEnemyAIController::BeginPlay()
 
 	//Bind Events
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPerceptionUpdated);
-	//AIPerceptionComponent->OnTargetPerception
 
 	//Run the base behaviour tree.
 	RunBehaviorTree(BTEnemy);
@@ -43,10 +43,7 @@ void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStim
 	//GetBlackBoard Component and Key
 	UBlackboardComponent* BlackBoard = GetBlackboardComponent();
 	FName BlackBoardPlayerKey = "Player";
-	//SpottedDirectly means we dont need any investigation.
-	FName BlackBoardIsSpottedDirectlyKey = "IsSpottedDirectly";
 	FName BlackBoardStimulusLocationKey = "StimulusLocation";
-
 
 	//Check is Sight Stimulus
 	TSubclassOf<UAISense> StimulusClass = UAIPerceptionSystem::GetSenseClassForStimulus(GetWorld(), Stimulus);
@@ -59,23 +56,23 @@ void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStim
 		{
 			//AI knows player is around.
 			Blackboard->SetValueAsObject(BlackBoardPlayerKey, Cast<UObject>(TargetActor));
+			IsBeingSpotted = true;
 
 			//We don't need to investigate anything. We see it lol.
-			Blackboard->SetValueAsBool(BlackBoardIsSpottedDirectlyKey, true);
+			Blackboard->ClearValue(BlackBoardStimulusLocationKey);
 		}
 		else
 		{
 			//If we do NOT see the player anymore, we need to investigate last location.
-			Blackboard->SetValueAsBool(BlackBoardIsSpottedDirectlyKey, false);
 			Blackboard->SetValueAsVector(BlackBoardStimulusLocationKey, Stimulus.StimulusLocation);
+			IsBeingSpotted = false;
 		}
 	}
 	//Are we trying to update Hearing?
 	else if (StimulusClass == UAISense_Hearing::StaticClass())
 	{
-		//If the player is already been spotted directly we don't care about the hearing, and we don't need to investigate anything.
-		//Sight is the primary sense.
-		if (Blackboard->GetValueAsBool(BlackBoardIsSpottedDirectlyKey)) return;
+		//If Player is already being spotted, then we don't care about the hearing.
+		if (IsBeingSpotted) return;
 
 		//If we do hear the player...
 		if (Stimulus.WasSuccessfullySensed())
@@ -86,11 +83,5 @@ void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStim
 			//AI is now investigating the location of the noise.
 			Blackboard->SetValueAsVector(BlackBoardStimulusLocationKey, Stimulus.StimulusLocation);
 		}
-		////If we dont hear the player anymore...
-		//else
-		//{			
-		//	//AI has lost the player.
-		//	Blackboard->SetValueAsObject(BlackBoardPlayerKey, nullptr);
-		//}
 	}
 }

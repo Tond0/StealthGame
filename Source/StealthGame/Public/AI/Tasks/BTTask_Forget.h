@@ -15,6 +15,10 @@ class STEALTHGAME_API UBTTask_Forget : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	struct FBlackboardKeySelector BlackboardKey2;
+
+protected:
 	explicit UBTTask_Forget(FObjectInitializer const& ObjectInitializer);
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

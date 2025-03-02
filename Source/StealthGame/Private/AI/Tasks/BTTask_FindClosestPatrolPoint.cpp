@@ -49,10 +49,7 @@ EBTNodeResult::Type UBTTask_FindClosestPatrolPoint::ExecuteTask(UBehaviorTreeCom
 		}
 	}
 
-	FVector NextLocation = ClosestPatrolPoint->GetActorLocation();
-
-	BlackBoardComponent->SetValueAsObject(BlackboardKeyPatrolPoint.SelectedKeyName, ClosestPatrolPoint);
-	BlackBoardComponent->SetValueAsVector(GetSelectedBlackboardKey(), NextLocation);
+	BlackBoardComponent->SetValueAsObject(GetSelectedBlackboardKey(), ClosestPatrolPoint);
 
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

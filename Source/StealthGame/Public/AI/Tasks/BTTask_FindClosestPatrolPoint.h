@@ -13,10 +13,6 @@ UCLASS()
 class STEALTHGAME_API UBTTask_FindClosestPatrolPoint : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
-protected:
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector BlackboardKeyPatrolPoint;
 
 protected:
 	explicit UBTTask_FindClosestPatrolPoint(FObjectInitializer const& ObjectInitializer);
