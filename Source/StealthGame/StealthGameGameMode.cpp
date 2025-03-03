@@ -16,23 +16,6 @@ AStealthGameGameMode::AStealthGameGameMode()
 	}
 }
 
-void AStealthGameGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-
-	//Bind to player death
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	APlayerCharacter* Player = Cast<APlayerCharacter>(PlayerCharacter);
-	Player->OnPlayerDeath.AddUniqueDynamic(this, &AStealthGameGameMode::ReloadLevel);
-
-	//Bind to player winning
-	//Get the goal first.
-	AActor* GoalActor = UGameplayStatics::GetActorOfClass(GetWorld(), AGoal::StaticClass());
-	Goal = Cast<AGoal>(GoalActor);
-	//Bind
-	Goal->OnGameWon.AddUniqueDynamic(this, &AStealthGameGameMode::ReloadLevel);
-}
-
 void AStealthGameGameMode::ReloadLevel()
 {
 	FTimerHandle TimerHandle;
@@ -48,4 +31,28 @@ void AStealthGameGameMode::Handle_TimerEnded()
 	FString LevelString = UGameplayStatics::GetCurrentLevelName(GetWorld());
 	FName LevelName = FName(LevelString);
 	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
+}
+
+void AStealthGameGameMode::SetGoal(AGoal* NewGoal)
+{
+	//Bind
+	NewGoal->OnGoalReached.BindDynamic(this, &AStealthGameGameMode::Handle_GameWon);
+}
+
+void AStealthGameGameMode::SetPlayer(APlayerCharacter* NewPlayerCharacter)
+{
+	//Bind
+	NewPlayerCharacter->OnPlayerDeath.BindDynamic(this, &AStealthGameGameMode::Handle_GameLost);
+}
+
+void AStealthGameGameMode::Handle_GameWon()
+{
+	OnGameOver.Broadcast(true);
+	ReloadLevel();
+}
+
+void AStealthGameGameMode::Handle_GameLost()
+{
+	OnGameOver.Broadcast(false);
+	ReloadLevel();
 }

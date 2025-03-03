@@ -32,34 +32,20 @@ void AEnemyAIController::BeginPlay()
 	//Bind Events
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPerceptionUpdated);
 
-	//Bind On Player Dead
-	ACharacter* CharacterPp = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	APlayerCharacter* Player = Cast<APlayerCharacter>(CharacterPp);
-	Player->OnPlayerDeath.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPlayerDeath);
-
-	//Bind On Player Won
-	//FIXME: Se ho tempo sarebbe bello creare una library "shortcut"
+	//Bind On Match Over
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
-	AStealthGameGameMode* GameMode = Cast<AStealthGameGameMode>(GameModeBase);
-	FOnGameWon* OnPlayerWon = GameMode->GetOnPlayerWonDelegate();
-	OnPlayerWon->AddUniqueDynamic(this, &AEnemyAIController::Handle_OnGameWon);
+	AStealthGameGameMode* StealthGameMode = Cast<AStealthGameGameMode>(GameModeBase);
+	StealthGameMode->OnGameOver.AddUniqueDynamic(this, &AEnemyAIController::Handle_GameOver);
 
 	//Run the base behaviour tree.
 	RunBehaviorTree(BTEnemy);
 }
 
-void AEnemyAIController::Handle_OnPlayerDeath()
+void AEnemyAIController::Handle_GameOver(bool PlayerWon)
 {
-	GetBlackboardComponent()->ClearValue("Player");
-}
-
-void AEnemyAIController::Handle_OnGameWon()
-{
-	//Disabilitiamo la vista.
 	AIPerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 	GetBlackboardComponent()->ClearValue("Player");
 }
-
 
 void AEnemyAIController::Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStimulus Stimulus)
 {

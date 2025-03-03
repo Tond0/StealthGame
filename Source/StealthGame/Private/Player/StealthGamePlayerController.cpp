@@ -11,14 +11,12 @@ void AStealthGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Bind on player won
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
-	AStealthGameGameMode* GameMode = Cast<AStealthGameGameMode>(GameModeBase);
-	FOnGameWon* OnPlayerWon = GameMode->GetOnPlayerWonDelegate();
-	OnPlayerWon->AddUniqueDynamic(this, &AStealthGamePlayerController::Handle_MatchOver);
+	AStealthGameGameMode* StealthGameMode = Cast<AStealthGameGameMode>(GameModeBase);
+	StealthGameMode->OnGameOver.AddUniqueDynamic(this, &AStealthGamePlayerController::Handle_OnGameOver);
 }
 
-void AStealthGamePlayerController::Handle_MatchOver()
+void AStealthGamePlayerController::Handle_OnGameOver(bool IsPlayerWon)
 {
 	//Disable inputs
 	GetPawn()->DisableInput(this);

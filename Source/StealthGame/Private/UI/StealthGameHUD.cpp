@@ -13,27 +13,19 @@ void AStealthGameHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//Bind to player death
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	APlayerCharacter* Player = Cast<APlayerCharacter>(PlayerCharacter);
-	Player->OnPlayerDeath.AddUniqueDynamic(this, &AStealthGameHUD::Handle_OnPlayerDeath);
-
-	//Bind to player winning
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
-	AStealthGameGameMode* GameMode = Cast<AStealthGameGameMode>(GameModeBase);
-	FOnGameWon* OnPlayerWon = GameMode->GetOnPlayerWonDelegate();
-	OnPlayerWon->AddUniqueDynamic(this, &AStealthGameHUD::Handle_OnPlayerWon);
+	AStealthGameGameMode* StealthGameMode = Cast<AStealthGameGameMode>(GameModeBase);
+	StealthGameMode->OnGameOver.AddUniqueDynamic(this, &AStealthGameHUD::Handle_OnGameOver);
 }
 
-
-void AStealthGameHUD::Handle_OnPlayerDeath()
+void AStealthGameHUD::Handle_OnGameOver(bool IsPlayerWon)
 {
-	UUserWidget* WidgetDeath = CreateWidget<UUserWidget>(GetWorld(), WidgetDeathClass);
-	WidgetDeath->AddToViewport();
-}
+	UUserWidget* WidgetGameOver = nullptr;
+	
+	if(IsPlayerWon)
+		WidgetGameOver = CreateWidget<UUserWidget>(GetWorld(), WidgetWonClass);
+	else
+		WidgetGameOver = CreateWidget<UUserWidget>(GetWorld(), WidgetDeathClass);
 
-void AStealthGameHUD::Handle_OnPlayerWon()
-{
-	UUserWidget* WidgetWon = CreateWidget<UUserWidget>(GetWorld(), WidgetWonClass);
-	WidgetWon->AddToViewport();
+	WidgetGameOver->AddToViewport();
 }

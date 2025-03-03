@@ -17,6 +17,6 @@ class STEALTHGAME_API AStealthGamePlayerController : public APlayerController
 	void BeginPlay() override;
 
 	UFUNCTION()
-	void Handle_MatchOver();
+	void Handle_OnGameOver(bool IsPlayerWon);
 
 };

@@ -16,6 +16,9 @@ class STEALTHGAME_API AStealthGameHUD : public AHUD
 	
 protected:
 	void BeginPlay() override;
+	
+	UFUNCTION()
+	void Handle_OnGameOver(bool IsPlayerWon);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
@@ -23,9 +26,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets")
 	TSubclassOf<UUserWidget> WidgetWonClass;
-	
-	UFUNCTION(BlueprintCallable, meta = (BlueprintProtected))
-	void Handle_OnPlayerDeath();
-	UFUNCTION(BlueprintCallable, meta = (BlueprintProtected))
-	void Handle_OnPlayerWon();
 };

@@ -12,6 +12,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "InputActionValue.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "StealthGame/StealthGameGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -45,6 +46,10 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
+	AStealthGameGameMode* StealthGameMode = Cast<AStealthGameGameMode>(GameModeBase);
+	StealthGameMode->SetPlayer(this);
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
@@ -197,8 +202,11 @@ void APlayerCharacter::GetBehindEnemyTransform(FTransform& BehindTransform, AEne
 
 void APlayerCharacter::ReceiveAttack()
 {
-	OnPlayerDeath.Broadcast();
+	OnPlayerDeath.Execute();
 	
-	//FIXME: Se non fossi stato male 1 settimana, e 1 settimana non l'avessi fatta a Rotterdam, avrei avuto il tempo di fare qualcosa di più carino
-	Destroy();
+	//FIXME: Ci sono MILIONI di modi per farlo meglio, ma essendo stato malato 1 settimana e l'altra sono stato a rotterdam, m'attacco.
+	// Si, sto cercando di giustificarmi.
+	//Player become invisible cause destroying can create problems.
+	GetMesh()->SetVisibility(false);
+	//Destroy();
 }

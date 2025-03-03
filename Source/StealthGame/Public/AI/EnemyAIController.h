@@ -38,7 +38,5 @@ protected:
 	UFUNCTION()
 	virtual void BeginPlay() override;
 	UFUNCTION()
-	void Handle_OnPlayerDeath();
-	UFUNCTION()
-	void Handle_OnGameWon();
+	void Handle_GameOver(bool PlayerWon);
 };

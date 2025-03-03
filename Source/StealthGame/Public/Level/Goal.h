@@ -7,7 +7,7 @@
 #include "Goal.generated.h"
 
 UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameWon);
+DECLARE_DYNAMIC_DELEGATE(FOnGoalReached);
 
 class UBoxComponent;
 
@@ -17,8 +17,8 @@ class STEALTHGAME_API AGoal : public AActor
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintAssignable)
-	FOnGameWon OnGameWon;
+	UPROPERTY()
+	FOnGoalReached OnGoalReached;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly)

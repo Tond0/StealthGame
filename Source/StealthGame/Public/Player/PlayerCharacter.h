@@ -14,7 +14,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+DECLARE_DYNAMIC_DELEGATE(FOnPlayerDeath);
 
 /**
  * 
@@ -25,7 +25,7 @@ class STEALTHGAME_API APlayerCharacter : public AStealthGameCharacter
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 
 protected:

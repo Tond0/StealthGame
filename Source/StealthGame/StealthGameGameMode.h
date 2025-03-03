@@ -7,21 +7,20 @@
 #include "Public/Level/Goal.h"
 #include "StealthGameGameMode.generated.h"
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameOver, bool, PlayerWon);
+
 UCLASS(minimalapi)
 class AStealthGameGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnGameOver OnGameOver;
+
 private:
 	FTimerHandle NextTickTimer;	
-
-//Goal
-protected:
-	UPROPERTY(BlueprintReadOnly)
-	AGoal* Goal;
-
-public:
-	FOnGameWon* GetOnPlayerWonDelegate() const { return &Goal->OnGameWon; }
 
 protected:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintProtected))
@@ -31,8 +30,19 @@ protected:
 	void Handle_TimerEnded();
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void SetGoal(AGoal* CurrentGoal);
+	UFUNCTION(BlueprintCallable)
+	void SetPlayer(APlayerCharacter* NewPlayerCharacter);
+
+protected:
+	UFUNCTION(meta = (BlueprintProtected))
+	void Handle_GameWon();
+	UFUNCTION(meta = (BlueprintProtected))
+	void Handle_GameLost();
+
+public:
 	AStealthGameGameMode();
-	void BeginPlay() override;
 };
 
 
