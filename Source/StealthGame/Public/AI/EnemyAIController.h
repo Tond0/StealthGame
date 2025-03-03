@@ -30,10 +30,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BlueprintProtected))
 	bool IsBeingSpotted;
 	
+
 	UFUNCTION()
 	void Handle_OnPerceptionUpdated(AActor* TargetActor, FAIStimulus Stimulus);
 
 protected:
 	UFUNCTION()
 	virtual void BeginPlay() override;
+	UFUNCTION()
+	void Handle_OnPlayerDeath();
+	UFUNCTION()
+	void Handle_OnGameWon();
 };

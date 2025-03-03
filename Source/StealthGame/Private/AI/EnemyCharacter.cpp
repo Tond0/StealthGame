@@ -37,6 +37,13 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+void AEnemyCharacter::Attack(AStealthGameCharacter* CharacterToAttack)
+{
+	IsAttacking = true;
+
+	CharacterToAttack->ReceiveAttack();
+}
+
 void AEnemyCharacter::ReceiveAttack()
 {
 	//Update Bool Blackboard.

@@ -38,6 +38,7 @@ protected:
 	UBlackboardComponent* BlackBoardComponent;
 
 public:
+	void Attack(AStealthGameCharacter* CharacterToAttack);
 	void ReceiveAttack() override;
 	UFUNCTION(BlueprintCallable)
 	bool CanBeAttacked();

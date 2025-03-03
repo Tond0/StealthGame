@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "InputActionValue.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -151,16 +152,27 @@ void APlayerCharacter::TryAttack(const FInputActionValue& Value)
 	if(!Enemy->CanBeAttacked()) return;
 	Enemy->ReceiveAttack();
 
+	//Fix animation if its crouched.
+	/*if (bIsCrouched)
+	{
+		USkeletalMeshComponent* SkeletalMesh = GetMesh();
+		FVector RelativeLocation = SkeletalMesh->GetRelativeLocation();
+		RelativeLocation.Z = -90;
+		SkeletalMesh->SetRelativeLocation(RelativeLocation);
+	}*/
+
+	UnCrouch();
+	//Disable collision for animation.
+	SetActorEnableCollision(false);
 	//FIXME: Se ho tempo queste cose qua sotto dovrebbero stare in un'altra funzione per alleggerire TryAttack. Se non ho tempo m'attacco.
 	//Set Player Transform for the animation
 	FTransform BehindEnemyTransform;
 	GetBehindEnemyTransform(BehindEnemyTransform, Enemy);
 	SetActorTransform(BehindEnemyTransform);
-
+	
 	//SetUp The Attack!
 	IsAttacking = true;
-	//Disable collision for animation.
-	SetActorEnableCollision(false);
+	
 	//Disable All Inputs
 	DisableInput(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
@@ -185,5 +197,8 @@ void APlayerCharacter::GetBehindEnemyTransform(FTransform& BehindTransform, AEne
 
 void APlayerCharacter::ReceiveAttack()
 {
-	return;
+	OnPlayerDeath.Broadcast();
+	
+	//FIXME: Se non fossi stato male 1 settimana, e 1 settimana non l'avessi fatta a Rotterdam, avrei avuto il tempo di fare qualcosa di più carino
+	Destroy();
 }

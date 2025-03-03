@@ -10,6 +10,10 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 
+#include "StealthGame/StealthGameGameMode.h"
+#include "Level/Goal.h"
+
+#include "Player/PlayerCharacter.h"
 #include "GameFramework/Character.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -28,8 +32,32 @@ void AEnemyAIController::BeginPlay()
 	//Bind Events
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPerceptionUpdated);
 
+	//Bind On Player Dead
+	ACharacter* CharacterPp = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	APlayerCharacter* Player = Cast<APlayerCharacter>(CharacterPp);
+	Player->OnPlayerDeath.AddUniqueDynamic(this, &AEnemyAIController::Handle_OnPlayerDeath);
+
+	//Bind On Player Won
+	//FIXME: Se ho tempo sarebbe bello creare una library "shortcut"
+	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
+	AStealthGameGameMode* GameMode = Cast<AStealthGameGameMode>(GameModeBase);
+	FOnGameWon* OnPlayerWon = GameMode->GetOnPlayerWonDelegate();
+	OnPlayerWon->AddUniqueDynamic(this, &AEnemyAIController::Handle_OnGameWon);
+
 	//Run the base behaviour tree.
 	RunBehaviorTree(BTEnemy);
+}
+
+void AEnemyAIController::Handle_OnPlayerDeath()
+{
+	GetBlackboardComponent()->ClearValue("Player");
+}
+
+void AEnemyAIController::Handle_OnGameWon()
+{
+	//Disabilitiamo la vista.
+	AIPerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+	GetBlackboardComponent()->ClearValue("Player");
 }
 
 

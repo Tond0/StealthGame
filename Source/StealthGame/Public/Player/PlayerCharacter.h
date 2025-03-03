@@ -13,6 +13,9 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+
 /**
  * 
  */
@@ -20,6 +23,12 @@ UCLASS()
 class STEALTHGAME_API APlayerCharacter : public AStealthGameCharacter
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerDeath OnPlayerDeath;
+
+protected:
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -81,6 +90,7 @@ protected:
 	UFUNCTION(BlueprintCallable, meta = (BlueprintProtected))
 	void GetBehindEnemyTransform(FTransform& BehindTransform, AEnemyCharacter* Enemy);
 
+public:
 	void ReceiveAttack() override;
 
 protected:
